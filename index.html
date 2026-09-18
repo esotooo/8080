@@ -10,7 +10,7 @@
     <header>
         <div class="header-container">
             <h1>Intel 8080 Emulator & Assembler</h1>
-            <span class="version-badge">Version 2.1</span>
+            <span class="version-badge">Version 2.2 · FPU</span>
         </div>
     </header>
 
@@ -29,6 +29,17 @@ HLT"></textarea>
                 <button id="btn-clear-code" class="btn-clear">Clear Code</button>
             </div>
             <div id="assembler-output"></div>
+            <div class="fpu-demos">
+                <h3>FPU Demos</h3>
+                <div class="fpu-demo-buttons">
+                    <button class="fpu-demo-btn" data-demo="add">ADD: 1.5 + 2.25</button>
+                    <button class="fpu-demo-btn" data-demo="sub">SUB: 10.5 - 3.25</button>
+                    <button class="fpu-demo-btn" data-demo="mul">MUL: 10.5 * 4</button>
+                    <button class="fpu-demo-btn" data-demo="div">DIV: 20 / 8</button>
+                    <button class="fpu-demo-btn" data-demo="divzero">ERROR: 10 / 0</button>
+                </div>
+                <div class="fpu-demo-hint">Loads the assembly source into the editor, then press <b>Assemble &amp; Load</b> and <b>Step</b> or <b>Run</b>.</div>
+            </div>
         </section>
 
         <section id="emulator-section">
@@ -93,11 +104,109 @@ HLT"></textarea>
                     <div id="memory-table"></div>
                 </div>
             </div>
+
+            <div class="fpu-panel">
+                <h2>FPU — Floating Point Unit <span class="fpu-tag">Coprocessor · IEEE-754 Float32</span></h2>
+
+                <div class="fpu-top">
+                    <div class="card fpu-diagram-card">
+                        <h3>CPU ↔ FPU Communication</h3>
+                        <div class="fpu-diagram">
+                            <div class="diagram-row" id="diagram-cpu-to-fpu">
+                                <div class="diagram-node" id="diagram-cpu-node">Intel 8080</div>
+                                <div class="diagram-link"><span class="link-label">OUT</span><span class="link-line"></span></div>
+                                <div class="diagram-node">I/O BUS</div>
+                                <div class="diagram-link fpu-link"><span class="link-label">OUT</span><span class="link-line"></span></div>
+                                <div class="diagram-node fpu-node">FPU</div>
+                            </div>
+                            <div class="diagram-row" id="diagram-fpu-to-cpu">
+                                <div class="diagram-node fpu-node">FPU</div>
+                                <div class="diagram-link fpu-link"><span class="link-label">IN</span><span class="link-line"></span></div>
+                                <div class="diagram-node">I/O BUS</div>
+                                <div class="diagram-link"><span class="link-label">IN</span><span class="link-line"></span></div>
+                                <div class="diagram-node">Intel 8080</div>
+                            </div>
+                        </div>
+                        <div class="io-last" id="io-last-event">Last I/O: —</div>
+                    </div>
+
+                    <div class="card fpu-ports-card">
+                        <h3>I/O Ports</h3>
+                        <table class="ports-table">
+                            <tr><th>PORT</th><th>DIRECTION</th><th>FUNCTION</th></tr>
+                            <tr id="port-0xF0"><td class="mono">F0H</td><td>OUT</td><td>Operand A</td></tr>
+                            <tr id="port-0xF1"><td class="mono">F1H</td><td>OUT</td><td>Operand B</td></tr>
+                            <tr id="port-0xF2"><td class="mono">F2H</td><td>OUT</td><td>Operation</td></tr>
+                            <tr id="port-0xF3"><td class="mono">F3H</td><td>IN</td><td>Result</td></tr>
+                            <tr id="port-0xF4"><td class="mono">F4H</td><td>IN</td><td>Status</td></tr>
+                            <tr id="port-0xF5"><td class="mono">F5H</td><td>OUT</td><td>Reset</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="fpu-grid">
+                    <div class="card fpu-operand-card">
+                        <h3>Operand A <span class="mini">via F0H</span></h3>
+                        <div class="fpu-value"><span class="fpu-label">Decimal</span><span class="fpu-strong" id="fpu-opA-dec">--</span></div>
+                        <div class="fpu-value"><span class="fpu-label">IEEE-754</span><span class="fpu-mono" id="fpu-opA-ieee">--</span></div>
+                        <div class="fpu-bytes" id="fpu-opA-bytes">
+                            <span class="fpu-byte">--</span><span class="fpu-byte">--</span><span class="fpu-byte">--</span><span class="fpu-byte">--</span>
+                        </div>
+                        <div class="fpu-endian">little-endian</div>
+                    </div>
+
+                    <div class="card fpu-operand-card">
+                        <h3>Operand B <span class="mini">via F1H</span></h3>
+                        <div class="fpu-value"><span class="fpu-label">Decimal</span><span class="fpu-strong" id="fpu-opB-dec">--</span></div>
+                        <div class="fpu-value"><span class="fpu-label">IEEE-754</span><span class="fpu-mono" id="fpu-opB-ieee">--</span></div>
+                        <div class="fpu-bytes" id="fpu-opB-bytes">
+                            <span class="fpu-byte">--</span><span class="fpu-byte">--</span><span class="fpu-byte">--</span><span class="fpu-byte">--</span>
+                        </div>
+                        <div class="fpu-endian">little-endian</div>
+                    </div>
+
+                    <div class="card fpu-op-card">
+                        <h3>Operation <span class="mini">via F2H</span></h3>
+                        <div class="fpu-operation-display" id="fpu-operation">—</div>
+                        <div class="fpu-command" id="fpu-operation-code">CMD: --</div>
+                    </div>
+
+                    <div class="card fpu-result-card">
+                        <h3>Result <span class="mini">via F3H</span></h3>
+                        <div class="fpu-value"><span class="fpu-label">Decimal</span><span class="fpu-strong" id="fpu-result-dec">--</span></div>
+                        <div class="fpu-value"><span class="fpu-label">IEEE-754</span><span class="fpu-mono" id="fpu-result-ieee">--</span></div>
+                        <div class="fpu-bytes" id="fpu-result-bytes">
+                            <span class="fpu-byte">--</span><span class="fpu-byte">--</span><span class="fpu-byte">--</span><span class="fpu-byte">--</span>
+                        </div>
+                        <div class="fpu-endian">little-endian</div>
+                    </div>
+
+                    <div class="card fpu-status-card">
+                        <h3>Status <span class="mini">via F4H</span></h3>
+                        <div class="fpu-status-display" id="fpu-status">READY</div>
+                        <div class="fpu-status-byte">F4H → <span id="fpu-status-byte">00H</span></div>
+                        <div class="fpu-error-msg" id="fpu-error-msg"></div>
+                    </div>
+                </div>
+
+                <div class="fpu-bottom">
+                    <div class="card fpu-history-card">
+                        <h3>Operation History</h3>
+                        <div id="fpu-history-table"></div>
+                    </div>
+                    <div class="card fpu-chart-card">
+                        <h3>Results Chart</h3>
+                        <canvas id="fpu-chart"></canvas>
+                        <div class="fpu-chart-note">Last executed operations (auto-updates).</div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
     <script src="cpu.js"></script>
     <script src="assembler.js"></script>
+    <script src="fpu.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

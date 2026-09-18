@@ -266,3 +266,399 @@ button:disabled {
 .stack-val {
     font-weight: bold;
 }
+
+/* ---------------------------------------------------------------
+   FPU DEMO LOADER (editor section)
+---------------------------------------------------------------- */
+.fpu-demos {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--bg-color);
+}
+
+.fpu-demos h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--secondary-color);
+}
+
+.fpu-demo-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.fpu-demo-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+    background-color: #7c3aed;
+}
+
+.fpu-demo-hint {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+    line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------
+   FPU COPROCESSOR PANEL
+---------------------------------------------------------------- */
+.fpu-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.fpu-panel > h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.fpu-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #7c3aed;
+    background: #ede9fe;
+    border: 1px solid #ddd6fe;
+    border-radius: 9999px;
+    padding: 0.2rem 0.6rem;
+    letter-spacing: 0.03em;
+}
+
+.fpu-top {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.fpu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.fpu-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.fpu-operand-card, .fpu-op-card, .fpu-result-card, .fpu-status-card {
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.card h3 .mini {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--secondary-color);
+}
+
+.fpu-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.fpu-label {
+    color: var(--secondary-color);
+    font-size: 0.78rem;
+}
+
+.fpu-strong {
+    font-weight: 700;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.fpu-mono {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: #312e81;
+}
+
+.fpu-bytes {
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
+}
+
+.fpu-byte {
+    flex: 1;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: #f8fafc;
+    color: var(--secondary-color);
+}
+
+.fpu-byte.filled {
+    background: #ecfdf5;
+    border-color: #86efac;
+    color: #166534;
+}
+
+.fpu-endian {
+    font-size: 0.7rem;
+    color: var(--secondary-color);
+    text-align: right;
+}
+
+.fpu-operation-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 0.5rem 0;
+    color: #7c3aed;
+    background: #f5f3ff;
+    border-radius: 6px;
+    border: 1px solid #ddd6fe;
+}
+
+.fpu-command {
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+}
+
+.fpu-status-display {
+    font-weight: 800;
+    font-size: 1.15rem;
+    text-align: center;
+    padding: 0.5rem 0;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: #f8fafc;
+}
+
+.fpu-status-display.ready { color: #166534; background: #f0fdf4; border-color: #86efac; }
+.fpu-status-display.busy { color: #92400e; background: #fffbeb; border-color: #fcd34d; }
+.fpu-status-display.error, .fpu-status-display.divzero { color: #991b1b; background: #fef2f2; border-color: #fca5a5; }
+
+.fpu-status-byte {
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+}
+
+.fpu-error-msg {
+    font-size: 0.75rem;
+    color: #b91c1c;
+    background: #fef2f2;
+    border-radius: 4px;
+    padding: 0.3rem 0.5rem;
+    line-height: 1.35;
+}
+
+.fpu-error-msg:empty { display: none; }
+
+/* ---------------------------------------------------------------
+   FPU DIAGRAM (CPU <-> I/O BUS <-> FPU)
+---------------------------------------------------------------- */
+.fpu-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.diagram-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem;
+    border-radius: 8px;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.diagram-node {
+    flex: 0 0 auto;
+    min-width: 74px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.4rem 0.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--text-color);
+    transition: all 0.25s ease;
+}
+
+.diagram-node.fpu-node {
+    border-color: #c4b5fd;
+    color: #6d28d9;
+    background: #f5f3ff;
+}
+
+.diagram-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 34px;
+}
+
+.link-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+    letter-spacing: 0.05em;
+}
+
+.link-line {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 4px;
+    margin-top: 3px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg, var(--secondary-color) 0 6px, transparent 6px 12px);
+}
+
+/* Active direction: glow + flowing dashes */
+.diagram-row.active {
+    background: #eff6ff;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.25);
+}
+
+.diagram-row.active .diagram-node {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.35);
+}
+
+.diagram-row.active .diagram-node.fpu-node {
+    border-color: #7c3aed;
+    color: #6d28d9;
+    box-shadow: 0 0 8px rgba(124, 58, 237, 0.35);
+}
+
+.diagram-row.active .link-line {
+    background: repeating-linear-gradient(90deg, var(--primary-color) 0 6px, transparent 6px 12px);
+    animation: io-flow 0.7s linear infinite;
+}
+
+@keyframes io-flow {
+    from { background-position: 0 0; }
+    to { background-position: 12px 0; }
+}
+
+.io-last {
+    margin-top: 0.6rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    color: var(--secondary-color);
+}
+
+/* ---------------------------------------------------------------
+   FPU PORTS TABLE
+---------------------------------------------------------------- */
+.ports-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.ports-table th, .ports-table td {
+    border: 1px solid var(--border-color);
+    padding: 0.3rem 0.5rem;
+    text-align: left;
+}
+
+.ports-table th {
+    background: #f1f5f9;
+    color: var(--secondary-color);
+    font-size: 0.75rem;
+}
+
+.ports-table td.mono {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+}
+
+.ports-table tr.active td {
+    background: #dbeafe;
+    box-shadow: inset 3px 0 0 var(--primary-color);
+}
+
+/* ---------------------------------------------------------------
+   FPU HISTORY & CHART
+---------------------------------------------------------------- */
+#fpu-history-table {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr 1fr;
+    gap: 2px;
+}
+
+.hist-cell {
+    padding: 3px 6px;
+    background: #f8fafc;
+    border-radius: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hist-cell.hist-header {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.hist-empty {
+    grid-column: span 5;
+    color: var(--secondary-color);
+    padding: 0.5rem 0.25rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.8rem;
+}
+
+#fpu-chart {
+    width: 100%;
+    height: 140px;
+    display: block;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.fpu-chart-note {
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--secondary-color);
+}
+
+/* ---------------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------------- */
+@media (max-width: 1100px) {
+    .fpu-top, .fpu-bottom {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    main { flex-direction: column; overflow: auto; }
+    body { height: auto; }
+    #editor-section { min-height: 420px; }
+    .diagram-node { min-width: 64px; font-size: 0.68rem; }
+}

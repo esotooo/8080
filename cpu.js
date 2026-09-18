@@ -1,6 +1,7 @@
 class Intel8080 {
     constructor() {
         this.memory = new Uint8Array(65536);
+        this.ioDevices = {}; // I/O bus: maps port (0-255) -> device
         this.reset();
     }
 
@@ -102,6 +103,29 @@ class Intel8080 {
 
     writeMemory(addr, val) {
         this.memory[addr & 0xFFFF] = val & 0xFF;
+    }
+
+    // I/O bus ------------------------------------------------
+    // Attach a device (e.g. the FloatingPointUnit) to a port address.
+    connectIO(port, device) {
+        this.ioDevices[port & 0xFF] = device;
+    }
+
+    // OUT: send the value held in register A to the device on the port.
+    outPort(port, value) {
+        const dev = this.ioDevices[port & 0xFF];
+        if (dev && typeof dev.write === 'function') {
+            dev.write(port & 0xFF, value & 0xFF);
+        }
+    }
+
+    // IN: read a byte from the device on the port into register A.
+    inPort(port) {
+        const dev = this.ioDevices[port & 0xFF];
+        if (dev && typeof dev.read === 'function') {
+            return dev.read(port & 0xFF) & 0xFF;
+        }
+        return 0; // empty port returns 00H
     }
 
     fetch() {
@@ -266,8 +290,8 @@ class Intel8080 {
             case 0x3F: this.flags.cy = !this.flags.cy; break; // CMC
 
             // Special
-            case 0xDB: this.fetch(); break; // IN (Ignored for now)
-            case 0xD3: this.fetch(); break; // OUT (Ignored for now)
+            case 0xDB: this.registers.a = this.inPort(this.fetch()); break; // IN r8
+            case 0xD3: this.outPort(this.fetch(), this.registers.a); break; // OUT r8
             case 0xFB: break; // EI
             case 0xF3: break; // DI
         }
