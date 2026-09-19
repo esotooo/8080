@@ -107,6 +107,78 @@ function updateUI() {
     updateFPUUI();
 }
 
+function renderStack() {
+    const table = document.getElementById('stack-table');
+    if (!table) return;
+    table.innerHTML = '';
+
+    const currentSP = cpu.registers.sp;
+
+    // Show 5 slots (2-byte aligned) from SP - 4 to SP + 6
+    for (let offset = 6; offset >= -4; offset -= 2) {
+        const addr = (currentSP + offset) & 0xFFFF;
+
+        const row = document.createElement('div');
+        row.className = 'stack-row';
+        if (offset === 0) {
+            row.classList.add('active');
+        }
+
+        const addrSpan = document.createElement('span');
+        addrSpan.className = 'stack-addr';
+        addrSpan.textContent = (offset === 0 ? 'SP ➔ ' : '     ') + hex16(addr) + ':';
+
+        const low = cpu.readMemory(addr);
+        const high = cpu.readMemory((addr + 1) & 0xFFFF);
+        const val16 = (high << 8) | low;
+
+        const valSpan = document.createElement('span');
+        valSpan.className = 'stack-val';
+        valSpan.textContent = hex16(val16) + 'H (' + hex8(high) + ' ' + hex8(low) + ')';
+
+        row.appendChild(addrSpan);
+        row.appendChild(valSpan);
+        table.appendChild(row);
+    }
+}
+
+function renderMemory() {
+    const table = document.getElementById('memory-table');
+    if (!table) return;
+    table.innerHTML = '';
+
+    // Header
+    const empty = document.createElement('div');
+    empty.className = 'mem-cell mem-header';
+    empty.textContent = '';
+    table.appendChild(empty);
+
+    for (let i = 0; i < 16; i++) {
+        const h = document.createElement('div');
+        h.className = 'mem-cell mem-header';
+        h.textContent = i.toString(16).toUpperCase();
+        table.appendChild(h);
+    }
+
+    // Rows
+    for (let row = 0; row < 8; row++) {
+        const addr = (memoryStart + row * 16) & 0xFFFF;
+        const h = document.createElement('div');
+        h.className = 'mem-cell mem-addr';
+        h.textContent = hex16(addr);
+        table.appendChild(h);
+
+        for (let col = 0; col < 16; col++) {
+            const cellAddr = (addr + col) & 0xFFFF;
+            const c = document.createElement('div');
+            c.className = 'mem-cell';
+            if (cellAddr === cpu.registers.pc) c.style.backgroundColor = '#fde047';
+            c.textContent = hex8(cpu.readMemory(cellAddr));
+            table.appendChild(c);
+        }
+    }
+}
+
 function renderFPUOperand(elId, bytes, value) {
     const wrap = document.getElementById(elId);
     const children = wrap.children;
